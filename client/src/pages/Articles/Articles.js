@@ -65,7 +65,7 @@ class Articles extends Component {
         <Row>
           <Col size="md-6">
             <Jumbotron>
-              <h1>What Books Should I Read?</h1>
+              <h1>What Articles Should I Read?</h1>
             </Jumbotron>
             <form>
               <Input
@@ -75,40 +75,40 @@ class Articles extends Component {
                 placeholder="Title (required)"
               />
               <Input
-                value={this.state.author}
+                value={this.state.url}
                 onChange={this.handleInputChange}
-                name="author"
-                placeholder="Author (required)"
+                name="url"
+                placeholder="Url (required)"
               />
               <TextArea
-                value={this.state.synopsis}
+                value={this.state.date}
                 onChange={this.handleInputChange}
-                name="synopsis"
+                name="date"
                 placeholder="Synopsis (Optional)"
               />
               <FormBtn
-                disabled={!(this.state.author && this.state.title)}
+                disabled={!(this.state.url && this.state.title)}
                 onClick={this.handleFormSubmit}
               >
-                Submit Book
+                Submit Article
               </FormBtn>
             </form>
           </Col>
           <Col size="md-6">
             <Jumbotron>
-              <h1>Books On My List</h1>
+              <h1>Articles On My List</h1>
             </Jumbotron>
-            {this.state.books.length ? (
+            {this.state.articles.length ? (
               <List>
-                {this.state.books.map(book => {
+                {this.state.articles.map(article => {
                   return (
-                    <ListItem key={book._id}>
-                      <a href={"/books/" + book._id}>
+                    <ListItem key={article._id}>
+                      <a href={"/articles/" + article._id}>
                         <strong>
-                          {book.title} by {book.author}
+                          {article.title} by {article.url}
                         </strong>
                       </a>
-                      <DeleteBtn onClick={() => this.deleteBook(book._id)} />
+                      <DeleteBtn onClick={() => this.deleteArticle(article._id)} />
                     </ListItem>
                   );
                 })}
@@ -123,4 +123,4 @@ class Articles extends Component {
   }
 }
 
-export default Books;
+export default Articles;
