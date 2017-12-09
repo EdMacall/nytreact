@@ -12,7 +12,7 @@ class Articles extends Component {
     articles: [],
     title: "",
     url: "",
-    date: Date.now();
+    date: Date.now()
   };
 
   // When the component mounts, load all articles and save them to this.state.articles
@@ -52,7 +52,7 @@ class Articles extends Component {
       API.saveArticle({
         title: this.state.title,
         url: this.state.url,
-        date: Date.now();
+        date: Date.now()
       })
         .then(res => this.loadArticles())
         .catch(err => console.log(err));
