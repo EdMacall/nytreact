@@ -6,33 +6,33 @@ import { Col, Row, Container } from "../../components/Grid";
 import { List, ListItem } from "../../components/List";
 import { Input, TextArea, FormBtn } from "../../components/Form";
 
-class Books extends Component {
+class Articles extends Component {
   // Setting our component's initial state
   state = {
-    books: [],
+    articles: [],
     title: "",
-    author: "",
-    synopsis: ""
+    url: "",
+    date: Date.now();
   };
 
-  // When the component mounts, load all books and save them to this.state.books
+  // When the component mounts, load all articles and save them to this.state.articles
   componentDidMount() {
-    this.loadBooks();
+    this.loadArticles();
   }
 
-  // Loads all books  and sets them to this.state.books
-  loadBooks = () => {
-    API.getBooks()
+  // Loads all articles  and sets them to this.state.articles
+  loadArticles = () => {
+    API.getArticles()
       .then(res =>
-        this.setState({ books: res.data, title: "", author: "", synopsis: "" })
+        this.setState({ articles: res.data, title: "", url: "", date: Date.now() })
       )
       .catch(err => console.log(err));
   };
 
-  // Deletes a book from the database with a given id, then reloads books from the db
-  deleteBook = id => {
-    API.deleteBook(id)
-      .then(res => this.loadBooks())
+  // Deletes an article from the database with a given id, then reloads articles from the db
+  deleteArticle = id => {
+    API.deleteArticle(id)
+      .then(res => this.loadArticles())
       .catch(err => console.log(err));
   };
 
@@ -44,17 +44,17 @@ class Books extends Component {
     });
   };
 
-  // When the form is submitted, use the API.saveBook method to save the book data
-  // Then reload books from the database
+  // When the form is submitted, use the API.saveArticle method to save the article data
+  // Then reload articles from the database
   handleFormSubmit = event => {
     event.preventDefault();
-    if (this.state.title && this.state.author) {
-      API.saveBook({
+    if (this.state.title && this.state.url) {
+      API.saveArticle({
         title: this.state.title,
-        author: this.state.author,
-        synopsis: this.state.synopsis
+        url: this.state.url,
+        date: Date.now();
       })
-        .then(res => this.loadBooks())
+        .then(res => this.loadArticles())
         .catch(err => console.log(err));
     }
   };
