@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import Jumbotron from "../../components/Jumbotron";
 import DeleteBtn from "../../components/DeleteBtn";
+import Group from "../../components/Group";
+import Div from "../../components/Div";
 import API from "../../utils/API";
 import { Col, Row, Container } from "../../components/Grid";
 import { List, ListItem } from "../../components/List";
@@ -10,9 +12,11 @@ class Articles extends Component {
   // Setting our component's initial state
   state = {
     articles: [],
-    title: "",
-    url: "",
-    date: Date.now()
+    savedArticles: [],
+    topic: "",
+    startyear: "",
+    endyear: "",
+
   };
 
   // When the component mounts, load all articles and save them to this.state.articles
@@ -48,13 +52,20 @@ class Articles extends Component {
   // Then reload articles from the database
   handleFormSubmit = event => {
     event.preventDefault();
-    if (this.state.title && this.state.url) {
-      API.saveArticle({
-        title: this.state.title,
-        url: this.state.url,
-        date: Date.now()
+    if (this.state.topic) {
+      console.log("I'm scraping the NYT.");
+      // console.log(this.state.topic);
+      // console.log(this.state.startyear);
+      // console.log(this.state.endyear);
+      API.getArticles({
+        title: this.state.topic,
+        startyear: this.state.startyear,
+        endyear: this.state.endyear
       })
-        .then(res => this.loadArticles())
+        .then(res => {
+            const resultingArticles = res.data.response.docs.filter(object => object.headline.print_headline)
+            const topFiveArticles = resultingArticles.splice(0,5).map(object => JSON.stringify(object))
+            this.setState({"articles": topFiveArticles})})
         .catch(err => console.log(err));
     }
   };
@@ -62,62 +73,91 @@ class Articles extends Component {
   render() {
     return (
       <Container fluid>
-        <Row>
-          <Col size="md-6">
-            <Jumbotron>
-              <h1>What Articles Should I Read?</h1>
-            </Jumbotron>
-            <form>
-              <Input
-                value={this.state.title}
-                onChange={this.handleInputChange}
-                name="title"
-                placeholder="Title (required)"
-              />
-              <Input
-                value={this.state.url}
-                onChange={this.handleInputChange}
-                name="url"
-                placeholder="Url (required)"
-              />
-              <TextArea
-                value={this.state.date}
-                onChange={this.handleInputChange}
-                name="date"
-                placeholder="Synopsis (Optional)"
-              />
-              <FormBtn
-                disabled={!(this.state.url && this.state.title)}
-                onClick={this.handleFormSubmit}
-              >
-                Submit Article
-              </FormBtn>
-            </form>
-          </Col>
-          <Col size="md-6">
-            <Jumbotron>
-              <h1>Articles On My List</h1>
-            </Jumbotron>
-            {this.state.articles.length ? (
-              <List>
-                {this.state.articles.map(article => {
-                  return (
-                    <ListItem key={article._id}>
-                      <a href={"/articles/" + article._id}>
-                        <strong>
-                          {article.title} by {article.url}
-                        </strong>
-                      </a>
-                      <DeleteBtn onClick={() => this.deleteArticle(article._id)} />
-                    </ListItem>
-                  );
-                })}
-              </List>
-            ) : (
-              <h3>No Results to Display</h3>
-            )}
-          </Col>
-        </Row>
+
+        <Jumbotron>
+          <h1>New York Times Article Scrubber</h1>
+          <h3>Search for and annotate articles of interest!</h3>
+        </Jumbotron>
+        <Jumbotron>
+          <h2>Search</h2>
+        </Jumbotron>
+        <Group>
+          <form>
+            <Input
+              value={this.state.topic}
+              onChange={this.handleInputChange}
+              name="topic"
+              placeholder="Topic (required)"
+            />
+            <Input
+              value={this.state.startyear}
+              onChange={this.handleInputChange}
+              name="startyear"
+              placeholder="Start Year"
+            />
+            <Input
+              value={this.state.endyear}
+              onChange={this.handleInputChange}
+              name="endyear"
+              placeholder="End Year"
+            />
+            <FormBtn
+              disabled={!(this.state.startyear && this.state.endyear && this.state.topic)}
+              onClick={this.handleFormSubmit}
+            >
+              Search
+            </FormBtn>
+          </form>
+        </Group>
+
+        <Jumbotron>
+          <h1>Results</h1>
+        </Jumbotron>
+        <Group>
+          {this.state.articles.length ? (
+            <List>
+              {this.state.articles.map(article => {
+                return (
+                  <ListItem key={article._id}>
+                    <a href={"/articles/" + article._id}>
+                      <strong>
+                        {article.title} by {article.url}
+                      </strong>
+                    </a>
+                    <DeleteBtn onClick={() => this.deleteArticle(article._id)} />
+                  </ListItem>
+                );
+              })}
+            </List>
+          ) : (
+            <h3>No Results to Display</h3>
+          )}
+          </Group>
+
+          <Jumbotron>
+            <h1>Saved Articles</h1>
+          </Jumbotron>
+          <Group>
+          {this.state.articles.length ? (
+            <List>
+              {this.state.articles.map(article => {
+                return (
+                  <ListItem key={article._id}>
+                    <a href={"/articles/" + article._id}>
+                      <strong>
+                        {article.title} by {article.url}
+                      </strong>
+                    </a>
+                    <DeleteBtn onClick={() => this.deleteArticle(article._id)} />
+                  </ListItem>
+                );
+              })}
+            </List>
+          ) : (
+            <h3>No Results to Display</h3>
+          )}
+        </Group>
+
       </Container>
     );
   }
