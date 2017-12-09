@@ -57,15 +57,17 @@ class Articles extends Component {
       // console.log(this.state.topic);
       // console.log(this.state.startyear);
       // console.log(this.state.endyear);
-      API.getArticles({
-        title: this.state.topic,
-        startyear: this.state.startyear,
-        endyear: this.state.endyear
-      })
+      API.getArticles(
+        this.state.topic,
+        this.state.startyear,
+        this.state.endyear
+      )
         .then(res => {
-            const resultingArticles = res.data.response.docs.filter(object => object.headline.print_headline)
-            const topFiveArticles = resultingArticles.splice(0,5).map(object => JSON.stringify(object))
-            this.setState({"articles": topFiveArticles})})
+            const resultingArticles = res.data.response.docs.filter(object => object.headline.print_headline);
+            const topFiveArticles = resultingArticles.splice(0,5).map(object => JSON.stringify(object));
+            this.setState({"articles": topFiveArticles});
+            console.log(resultingArticles);
+        })
         .catch(err => console.log(err));
     }
   };
@@ -118,13 +120,12 @@ class Articles extends Component {
             <List>
               {this.state.articles.map(article => {
                 return (
-                  <ListItem key={article._id}>
-                    <a href={"/articles/" + article._id}>
+                  <ListItem>
+                    <a href={"/articles/"}>
                       <strong>
                         {article.title} by {article.url}
                       </strong>
                     </a>
-                    <DeleteBtn onClick={() => this.deleteArticle(article._id)} />
                   </ListItem>
                 );
               })}
@@ -140,7 +141,7 @@ class Articles extends Component {
           <Group>
           {this.state.articles.length ? (
             <List>
-              {this.state.articles.map(article => {
+              {this.state.savedArticles.map(article => {
                 return (
                   <ListItem key={article._id}>
                     <a href={"/articles/" + article._id}>
