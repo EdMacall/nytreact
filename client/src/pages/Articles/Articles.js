@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import Jumbotron from "../../components/Jumbotron";
 import DeleteBtn from "../../components/DeleteBtn";
+import SaveBtn from "../../components/SaveBtn";
 import Group from "../../components/Group";
 import Div from "../../components/Div";
+import { Link } from "react-router-dom";
 import API from "../../utils/API";
 import { Col, Row, Container } from "../../components/Grid";
 import { List, ListItem } from "../../components/List";
@@ -28,8 +30,21 @@ class Articles extends Component {
   loadArticles = () => {
     API.getArticles()
       .then(res =>
-        this.setState({ articles: res.data, title: "", url: "", date: Date.now() })
+        this.setState({ savedArticles: res.data, title: "", url: "", date: Date.now() })
       )
+      .catch(err => console.log(err));
+  };
+
+  // Saves an article to the database with a given id, then reloads articles from the db
+  saveArticle = id => {
+    console.log("I got to saveArticle.")
+    API.saveArticle({
+      headline: "OMG",
+      byline: "WTF",
+      web_url: "",
+      myId: id
+    })
+      .then(res => this.loadArticles())
       .catch(err => console.log(err));
   };
 
@@ -63,10 +78,10 @@ class Articles extends Component {
         this.state.endyear
       )
         .then(res => {
-            const resultingArticles = res.data.response.docs.filter(object => object.headline.print_headline);
-            const topFiveArticles = resultingArticles.splice(0,5).map(object => JSON.stringify(object));
-            this.setState({"articles": topFiveArticles});
-            console.log(resultingArticles);
+            console.log(res.data.response);
+            const  myArticles = res.data.response.docs;
+            // const topFiveArticles = resultingArticles.splice(0,5);
+            this.setState({"articles": myArticles});
         })
         .catch(err => console.log(err));
     }
@@ -118,17 +133,19 @@ class Articles extends Component {
         <Group>
           {this.state.articles.length ? (
             <List>
-              {this.state.articles.map(article => {
-                return (
-                  <ListItem>
-                    <a href={"/articles/"}>
-                      <strong>
-                        {article.title} by {article.url}
-                      </strong>
-                    </a>
-                  </ListItem>
-                );
-              })}
+              {this.state.articles.map((article) => 
+                <ListItem key={article._id}>
+                  <p>
+                    <strong>{article.headline.main}</strong> by {article.byline.original}
+                    <SaveBtn onClick={() => this.saveArticle(article._id)} />
+                  </p>
+                  <a href={article.web_url}>
+                    <p>
+                      {article.web_url}
+                    </p>
+                  </a>
+                </ListItem>
+              )}
             </List>
           ) : (
             <h3>No Results to Display</h3>
@@ -144,10 +161,13 @@ class Articles extends Component {
               {this.state.savedArticles.map(article => {
                 return (
                   <ListItem key={article._id}>
-                    <a href={"/articles/" + article._id}>
-                      <strong>
-                        {article.title} by {article.url}
-                      </strong>
+                    <a href={article.web_url}>
+                      <p><strong>
+                        {article.title}</strong> by {article.url}
+                      </p>
+                      <p>
+                        {article.web_url}
+                      </p>
                     </a>
                     <DeleteBtn onClick={() => this.deleteArticle(article._id)} />
                   </ListItem>

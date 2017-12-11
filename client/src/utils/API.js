@@ -16,6 +16,7 @@ export default {
   },
   // Saves a article to the database
   saveArticle: function(articleData) {
+    console.log("I got to the API.")
     return axios.post("/api/articles", articleData);
   }
 };

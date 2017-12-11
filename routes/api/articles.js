@@ -10,6 +10,7 @@ router.route("/")
 router
   .route("/:id")
   .get(articlesController.findById)
+  .post(articlesController.create)
   .put(articlesController.update)
   .delete(articlesController.remove);
 
