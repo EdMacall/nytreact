@@ -2,9 +2,13 @@ import axios from "axios";
 
 export default {
   // Gets all articles
-  getArticles: function(topic, startyear, endyear) {
+  scrapeArticles: function(topic, startyear, endyear) {
     return axios.get("https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=b9f91d369ff59547cd47b931d8cbc56b:0:74623931&q=" +
                      topic + "&begin_date=" + startyear + "0101$end_date=" + endyear + "0101");
+  },
+  // Gets all articles
+  getArticles: function(topic, startyear, endyear) {
+    return axios.get("/api/articles/");
   },
   // Gets the article with the given id
   getArticle: function(id) {
@@ -17,6 +21,6 @@ export default {
   // Saves a article to the database
   saveArticle: function(articleData) {
     console.log("I got to the API.")
-    return axios.post("http://localhost:3000/api/articles/", articleData);
+    return axios.post("/api/articles/", articleData);
   }
 };

@@ -5,7 +5,7 @@ const articleSchema = new Schema({
   headline: { type: String, required: true },
   byline: { type: String, required: true },
   web_url: { type: String, required: true },
-  myId { type: String, required: true },
+  notes: { type: String, required: true },
   date: { type: Date, default: Date.now }
 });
 

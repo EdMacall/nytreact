@@ -28,6 +28,7 @@ class Articles extends Component {
 
   // Loads all articles  and sets them to this.state.articles
   loadArticles = () => {
+    console.log("I got to loadArticle.")
     API.getArticles()
       .then(res =>
         this.setState({ savedArticles: res.data, title: "", url: "", date: Date.now() })
@@ -39,10 +40,10 @@ class Articles extends Component {
   saveArticle = id => {
     console.log("I got to saveArticle.")
     API.saveArticle({
-      headline: "OMG",
-      byline: "WTF",
-      web_url: "",
-      myId: id
+      headline: this.state.articles[id].headline.main,
+      byline: this.state.articles[id].byline.original,
+      web_url: this.state.articles[id].web_url,
+      notes: "OMG!!!   WTF!!!"
     })
       .then(res => this.loadArticles())
       .catch(err => console.log(err));
@@ -72,7 +73,7 @@ class Articles extends Component {
       // console.log(this.state.topic);
       // console.log(this.state.startyear);
       // console.log(this.state.endyear);
-      API.getArticles(
+      API.scrapeArticles(
         this.state.topic,
         this.state.startyear,
         this.state.endyear
@@ -133,11 +134,11 @@ class Articles extends Component {
         <Group>
           {this.state.articles.length ? (
             <List>
-              {this.state.articles.map((article) => 
-                <ListItem key={article._id}>
+              {this.state.articles.map((article, index) => 
+                <ListItem key={index}>
                   <p>
                     <strong>{article.headline.main}</strong> by {article.byline.original}
-                    <SaveBtn onClick={() => this.saveArticle(article._id)} />
+                    <SaveBtn onClick={() => this.saveArticle(index)} />
                   </p>
                   <a href={article.web_url}>
                     <p>
@@ -156,14 +157,17 @@ class Articles extends Component {
             <h1>Saved Articles</h1>
           </Jumbotron>
           <Group>
-          {this.state.articles.length ? (
+          {this.state.savedArticles.length ? (
             <List>
               {this.state.savedArticles.map(article => {
                 return (
                   <ListItem key={article._id}>
                     <a href={article.web_url}>
                       <p><strong>
-                        {article.title}</strong> by {article.url}
+                        {article.headline}</strong> {article.byline} Date Saved: {article.date}
+                      </p>
+                      <p>
+                        Notes: {article.notes}
                       </p>
                       <p>
                         {article.web_url}
