@@ -3,9 +3,11 @@ import Jumbotron from "../../components/Jumbotron";
 import DeleteBtn from "../../components/DeleteBtn";
 import SaveBtn from "../../components/SaveBtn";
 import Group from "../../components/Group";
+
 import Div from "../../components/Div";
 import { Link } from "react-router-dom";
 import API from "../../utils/API";
+import { SearchCard, ResultsCard, SavedArticlesCard } from "../../components/Card";
 import { Col, Row, Container } from "../../components/Grid";
 import { List, ListItem } from "../../components/List";
 import { Input, TextArea, FormBtn } from "../../components/Form";
@@ -96,10 +98,8 @@ class Articles extends Component {
           <h1>New York Times Article Scrubber</h1>
           <h3>Search for and annotate articles of interest!</h3>
         </Jumbotron>
-        <Jumbotron>
-          <h2>Search</h2>
-        </Jumbotron>
-        <Group>
+        <SearchCard>
+ 
           <form>
             <Input
               value={this.state.topic}
@@ -126,12 +126,10 @@ class Articles extends Component {
               Search
             </FormBtn>
           </form>
-        </Group>
 
-        <Jumbotron>
-          <h1>Results</h1>
-        </Jumbotron>
-        <Group>
+        </SearchCard>
+
+        <ResultsCard>
           {this.state.articles.length ? (
             <List>
               {this.state.articles.map((article, index) => 
@@ -151,12 +149,9 @@ class Articles extends Component {
           ) : (
             <h3>No Results to Display</h3>
           )}
-          </Group>
+          </ResultsCard>
 
-          <Jumbotron>
-            <h1>Saved Articles</h1>
-          </Jumbotron>
-          <Group>
+          <SavedArticlesCard>
           {this.state.savedArticles.length ? (
             <List>
               {this.state.savedArticles.map(article => {
@@ -181,7 +176,7 @@ class Articles extends Component {
           ) : (
             <h3>No Results to Display</h3>
           )}
-        </Group>
+        </SavedArticlesCard>
 
       </Container>
     );
